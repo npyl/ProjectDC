@@ -1,10 +1,5 @@
-function [dict, pos] = huffmandict(file)
-% H συνάρτηση φορτώνει το αρχείο file στη μνήμη και επιστρέφει τις μεταβλητές dict και pos
-% η 1η, περιέχει τον κάθε χαρακτήρα (δηλ. σύμβολο-πηγής) μία μόνο φορά και
-% η 2η, περιέχει την πιθανότητα εμφάνισης κάθενος από αυτά τα σύμβολα, στις
-%   αντίστοιχες θέσεις: συνεπώς, εάν έχει καταχωρηθεί το σύμβολο w στη θέση 1
-%   του dict, τότε η αντίστοιχη πιθανότητά του θα είναι στην ίδια θέση (1),
-%   στη μεταβλητή pos.
+function dict = myhuffmandict(file)
+
     symbols = [];
     pos = [];
 
@@ -46,53 +41,83 @@ function [dict, pos] = huffmandict(file)
         end
     end
 
-    % δημιουργούμε την πρώτη στήλη
-    for i = 1:length(symbols)
-        dict(i,1) = struct('str', symbols(i), 'p', pos(i));
-    end
+    p = pos;
 
-    %
-    % αλγόριθμος δημιουργίας dict
-    %
-    reached_root = 0;
-    height = length(symbols);           % ύψος στήλης
-    col = 1;                            % δείκτης της τωρινής στήλης
+    [~, n] = size(symbols);
+    [~, idx] = sort(-p);
     
-    % σορτάρουμε τη στήλη 1
-    column = dict(:,1)';
-    vector = huffmansort(column);
-    dict(:,1) = vector';
-
-    while ~reached_root
-        % συγχώνευση
-        p1 = dict(height, col).p;
-        p2 = dict(height - 1, col).p;
-        sum = p1 + p2;
-
-        % δημιουργούμε το string της συγχώνευσης (το string είναι της μορφής α0b1 ώστε να διακρίνεται το αριστερό από το δεξί)
-        str = dict(height, col).str + '0' + dict(height, col).str + '1';
-
-        % εύρεση της γραμμής (k) που πρέπει να τοποθετήσουμε το συγχωνευμένο αντικείμενο
-        k = 1;
-        while sum < dict(k, col).p
-            k = k + 1;
-        end
-
-        % προσθέτουμε νέα στήλη
-        for i = 1:k-1
-            dict(i, col + 1) = dict(i, col);
-        end
-        dict(k, col + 1) = struct('str', str, 'p', sum);
-        for i = k+1:height
-            dict(i, col + 1) = dict(i, col);
-        end
-
-        % πάμε στην επόμενη στήλη
-        col = col + 1;
-
-        % μείναμε με μόνο 1 στοιχείο?
-        if k == 2
-            reached_root = 1;
+    % initialize adjacency list as a cell array
+    % col 1 symbol,2 propabilities,3 flag ,4-5 children nodes,6 code
+    adjList = cell(n,6);
+    for i = 1:n
+        adjList(i,1) = symbols(i);
+    end
+    adjList(:,2) = num2cell(p);
+    
+    % sort cell array based on propabilities
+    adjList = adjList(idx,:);
+    adjList(:,3) = 'f';
+    
+    % auxiliary function to determine ending condition
+    function flag = finish(flagCol)
+        flag = 't';
+        flagCol = cell2mat(flagCol);
+        for i = 1:n-1
+            if flagCol(i) == 'f'
+                flag = 'f';
+            end
         end
     end
+    
+    % recursive function to traverse the tree and assign edge weights
+    function traverse(root)
+        leftChild = cell2mat(adjList(root,5));
+        rightChild = cell2mat(adjList(root,4));
+    
+        if isempty(leftChild) == 0
+            adjList(leftChild,6) = [cell2mat(adjList(root,6)) 0];
+            traverse(leftChild)
+        end
+        if isempty(rightChild) == 0
+            adjList(rightChild,6) = [cell2mat(adjList(root,6)) 1];
+            traverse(rightChild)
+        end
+    end
+    
+    flag = finish(adjList(:,3));
+    while flag == 'f'
+        % find the two indexes corresponding to the symbols with the smallest values
+        [~, idx] = sort(cell2mat(adjList(:,2)));
+        for i = 1:n
+            if char(adjList(idx(i),3)) == 'f'
+                min1 = idx(i);
+                break
+            end
+        end
+        for i = 1:n
+            if char(adjList(idx(i),3)) == 'f' && idx(i) ~= min1
+                min2 = idx(i);
+                break
+            end
+        end
+        % create new node
+        n = n + 1;
+        adjList(n,1) = cell2mat(adjList(min1,2)) + cell2mat(adjList(min2,2));
+        adjList(n,2) = cell2mat(adjList(min1,2)) + cell2mat(adjList(min2,2));
+        adjList(n,3) = 'f';
+        adjList(n,4) = min2;
+        adjList(n,5) = min1;
+        adjList(min1,3) = 't';
+        adjList(min2,3) = 't';
+    
+        flag = finish(adjList(:,3));
+    end
+    % traverse the tree and assign edge weights
+    traverse(n);
+    
+    n = (n+1)/2;
+    dict = cell(n,2);
+    dict(:,1) = adjList(1:n,1);
+    dict(:,2) = adjList(1:n,6);
+
 end
