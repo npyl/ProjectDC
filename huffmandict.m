@@ -1,4 +1,4 @@
-function dict = huffmandict(file)
+function [dict, data] = huffmandict(file)
 
     symbols = [];
     pos = [];
@@ -119,5 +119,4 @@ function dict = huffmandict(file)
     dict = cell(n,2);
     dict(:,1) = adjList(1:n,1);
     dict(:,2) = adjList(1:n,6);
-
 end
