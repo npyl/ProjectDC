@@ -117,6 +117,7 @@ function [dict, data] = huffmandict(file)
     
     n = (n+1)/2;
     dict = cell(n,2);
-    dict(:,1) = adjList(1:n,1);
-    dict(:,2) = adjList(1:n,6);
+    dict(:,1) = adjList(1:n,1); % symbol
+    dict(:,2) = adjList(1:n,6); % code
+    dict(:,3) = adjList(1:n,2); % posibilities
 end

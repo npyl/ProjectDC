@@ -1,8 +1,5 @@
-function [encoded_data] = huffmanenco(file)
+function [encoded_data] = huffmanenco(dict, data)
     encoded_data = [];
-
-    % παίρνουμε το dict και τις αντοίστοιχες πιθανότητες
-    [dict, data] = huffmandict(file);
     
     for i = 1:length(data)
         % παίρνουμε τον i-οστό χαρακτήρα
