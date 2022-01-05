@@ -1,4 +1,4 @@
-function [dict, data] = huffmandict(file)
+function [dict, data] = huffmandict2(file)
 
     symbols = [];
     pos = [];
@@ -40,6 +40,31 @@ function [dict, data] = huffmandict(file)
             pos = [pos p];
         end
     end
+
+    % -------------------------------
+    % Kώδικας για 2-τάξης
+    % -------------------------------
+
+    new_symbols = {};
+    new_pos = [];
+
+    for i = 1:length(symbols)
+        for j = 1:length(symbols)
+            s1 = symbols(i);
+            s2 = symbols(j);
+            s = horzcat(s1, s2);
+
+            p1 = pos(i);
+            p2 = pos(j);
+            p = p1 * p2;
+
+            new_symbols(end + 1) = {s};
+            new_pos(end + 1) = p;
+        end
+    end
+    
+    symbols = new_symbols;
+    pos = new_pos;
 
     % -------------------------------
     % Κατασκευή Δένδρου & dict
