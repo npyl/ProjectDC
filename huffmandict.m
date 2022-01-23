@@ -108,10 +108,26 @@ function [dict, data] = huffmandict(file)
     end
     % traverse the tree and assign edge weights
     traverse(n);
-    
+
+    % Μετρατρέπουμε το κάθε code από array-of-digits σε string για να είναι
+    % πιο εύκολη η χρήση του από την huffmanenco και huffmandeco
+    codes = adjList(1:n, 6);
+    new_codes = {};
+    [x, ~] = size(codes);
+    for i = 1:x
+        code = codes{i};
+        str = '';
+        for j = 1:length(code)
+            str = strcat(str, num2str(code(j)));
+        end
+        adjList{i, 6} = str;
+    end
+
+    disp(new_codes);
+
     n = (n+1)/2;
     dict = cell(n,2);
-    dict(:,1) = adjList(1:n,1); % symbol
-    dict(:,2) = adjList(1:n,6); % code
-    dict(:,3) = adjList(1:n,2); % posibilities
+    dict(:,1) = adjList(1:n, 1); % symbol
+    dict(:,2) = adjList(1:n, 6); % code
+    dict(:,3) = adjList(1:n, 2); % posibilities
 end

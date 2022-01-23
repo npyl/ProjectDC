@@ -10,8 +10,7 @@ function [encoded_data] = huffmanenco(dict, data)
         j = find(symbols == c);
         codes = dict(:, 2);
         code = codes{j};
-        str = num2str(code);
 
-        encoded_data = [encoded_data str];
+        encoded_data = [encoded_data code];
     end
 end
