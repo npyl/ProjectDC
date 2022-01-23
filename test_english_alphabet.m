@@ -6,7 +6,7 @@ function test_english_alphabet()
     % ανάγνωση αρχείου & δημιουργία dictionary
     % ----------------------------------------
     [dict, data] = huffmandict('./cvxopt.txt');
-    disp('Περιεχόμενα του αρχείου:');
+    disp('Δεδομένα από πηγή:');
     disp(data);
 
     % -----------------------------------------
@@ -36,36 +36,32 @@ function test_english_alphabet()
         % disp(dict{i, 3});
     end
 
-    % ---------------------------
-    % 2) β) Yπολογισμός εντροπίας, μέσου μήκους κώδικα, απόδοσης
-    % ---------------------------
+    % Μετρήσεις
 
-    A = dict(:,1);  % συμβολα => αλφάβητο
-    p = dict(:,3);  % πιθανότητες
-    c = dict(:, 2); % κώδικες
-    H = 0;          % εντροπία
-    L = 0;          % μέσο μήκος κώδικα
-    n = 0;          % απόδοση
-
-    [m, ~] = size(A);
+    % F - alphabet
+    % p - posibilities   c - respective codes
+    F = dict(:,1);
+    p = dict(:,3);
+    c = dict(:, 2);
+    
+    % H - entropy 
+    % L - μέσο-μήκος κώδικα 
+    % n - απόδοση
+    H = 0;
+    L = 0;
+    n = 0;
+    [m, ~] = size(F);
     for i=1:m
         H = H + p{i} * log2(1 ./ p{i});
     end
-    disp('Η(Φ) = ');
-    disp(H);
-
     for i=1:m
-        % μήκος του i-οστού κώδικα
         li = length(c{i});
         L = L + p{i} * li;
     end
-    disp('L = ');
-    disp(L);
-
-    Lmin = H;   % η Lmin = H(Φ)
+    Lmin = H;
     n = Lmin ./ L;
-    disp('Απόδοση = ');
-    disp(n);
+    
+    disp(sprintf('L = %f H(F) = %f n = %f', L, H, n));
 
     % --------------------------------------------------
     % δημιουργία κωδικοποιημένης μορφής των περιεχομένων
@@ -78,7 +74,7 @@ function test_english_alphabet()
     % αποκωδικοποίηση
     % ---------------
     decoded_data = huffmandeco(dict, encoded_data);
-    disp('Αποκωδικοποιημένο κείμενο:');
+    disp('Μετά την απο-κωδικοποίηση:');
     disp(decoded_data);
 end
 

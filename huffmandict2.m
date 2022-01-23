@@ -3,18 +3,13 @@ function [dict, data] = huffmandict2(file)
     symbols = [];
     pos = [];
 
-    % φορτώνουμε το αρχείο στη μνήμη => όλοι οι χαρακτήρες βρίσκονται σε
-    % μία σειρά
     data = fileread(file);
 
-    % προσθέτουμε έναν-έναν χαρακτήρα από τα data στο symbols χωρίς
-    % επαναλήψεις
     for i = 1:length(data)
         exists = 0;
         times = 0;
         c = data(i);
 
-        % βρίσκουμε εάν ο χαρακτήρας υπάρχει ήδη στο symbols
         for k = 1:length(symbols)
             if c == symbols(k)
                 exists = 1;
@@ -22,29 +17,25 @@ function [dict, data] = huffmandict2(file)
             end
         end
 
-        % εάν όχι, πρέπει να τον προσθέσουμε υπολογίζοντας ταυτόχρονα την
-        % πιθανότητα εμφάνισής του
         if ~exists
-            % προσθέτουμε το νέο στοιχείο
             symbols = [symbols data(i)];
 
-            % ας βρούμε πόσες φορές εμφανίζεται
             for j = (i + 1):length(data)
                 if c == data(j)
                     times = times + 1;
                 end
             end
 
-            % καταγράφουμε την πιθανότητα αυτού του συμβόλου
             p = times / length(data);
             pos = [pos p];
         end
     end
 
-    % -------------------------------
-    % Kώδικας για 2-τάξης
-    % -------------------------------
-
+    %
+    % Εφόσον θέλουμε να δημιουργήσουμε 2ης τάξης πηγή, θα ενώσουμε κάθε
+    % χαρακτήρα με όλους τους υπόλοιπους και θα υπολογίσουμε την νέα
+    % πιθανότητα.
+    %
     new_symbols = {};
     new_pos = [];
 
@@ -65,10 +56,6 @@ function [dict, data] = huffmandict2(file)
     
     symbols = new_symbols;
     pos = new_pos;
-
-    % -------------------------------
-    % Κατασκευή Δένδρου & dict
-    % -------------------------------
 
     p = pos;
 
