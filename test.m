@@ -46,4 +46,26 @@ function test()
     decoded_data = huffmandeco(dict, encoded_data);
     disp('Μετά την απο-κωδικοποίηση:');
     disp(decoded_data);
+
+    %
+    % Ερώτημα 5)
+    %
+
+    % convert string to numbers
+    num_encoded_data = 0;
+    for i = 1:length(encoded_data)
+        c = encoded_data(i);
+        num_encoded_data = [num_encoded_data str2num(c)];
+    end
+
+    y = bsc(num_encoded_data);
+    [~, p] = biterr(num_encoded_data, y);
+
+    % στρογγυλοποίηση στο 2ο δεκαδικό ψηφίο
+    p = round(p, 2);
+
+    Hb = (-1) * p * log2(p) - (1 - p) * log2(1 - p);
+    C = 1 - Hb;
+
+    disp(sprintf('Χωρητικότητα Καναλιού: %f', C));
 end
